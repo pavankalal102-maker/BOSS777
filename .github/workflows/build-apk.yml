@@ -1,0 +1,36 @@
+name: Build BOSS777 APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build Web App Bundle
+        run: |
+          mkdir -p build_output
+          cp -r index.html style.css script.js logo.png manifest.json config.xml build_output/ 2>/dev/null || cp -r index.html style.css script.js logo.png build_output/
+
+      - name: Upload Web Assets Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: BOSS777-Web-Bundle
+          path: build_output/
