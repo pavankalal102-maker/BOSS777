@@ -1,0 +1,48 @@
+name: Build BOSS777 Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Install Cordova
+        run: npm install -g cordova
+
+      - name: Create Cordova App & Inject Files
+        run: |
+          cordova create boss777_build com.boss777.app "BOSS777"
+          rm -rf boss777_build/www/*
+          cp -r index.html style.css script.js logo.png manifest.json config.xml boss777_build/www/ 2>/dev/null || cp -r index.html style.css script.js logo.png config.xml boss777_build/www/
+          cp config.xml boss777_build/
+          cd boss777_build
+          cordova platform add android
+
+      - name: Build Android APK
+        run: |
+          cd boss777_build
+          cordova build android --no-telemetry
+
+      - name: Upload Finished APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: BOSS777-Official-APK
+          path: boss777_build/platforms/android/app/build/outputs/apk/debug/app-debug.apk
