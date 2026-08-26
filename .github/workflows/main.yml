@@ -1,4 +1,4 @@
-name: Build BOSS777 App
+name: Build BOSS777 Android APK
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Setup Java JDK
         uses: actions/setup-java@v5
@@ -24,21 +24,25 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Install Cordova
-        run: npm install -g cordova
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-      - name: Create & Build Cordova Project
+      - name: Initialize App Project
         run: |
-          cordova create boss_app com.boss777.app "BOSS777"
-          cd boss_app
-          rm -rf www/*
-          cp -r ../index.html ../style.css ../script.js ../logo.png www/ 2>/dev/null || cp -r ../index.html ../script.js ../logo.png www/
-          if [ -f ../config.xml ]; then cp ../config.xml ./; fi
-          cordova platform add android
-          cordova build android --no-telemetry
+          npm init -y
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npx cap init BOSS777 com.boss777.app --web-dir .
+          npx cap add android
 
-      - name: Upload APK
+      - name: Build APK File
+        run: |
+          npx cap copy
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: BOSS777-App
-          path: boss_app/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+          name: BOSS777-Official-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
