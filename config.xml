@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.boss777.app" version="1.0.0" xmlns="http://www.w3.org/ns/widgets">
+    <name>BOSS777</name>
+    <description>BOSS777 App</description>
+    <author>BOSS777</author>
+    <content src="index.html" />
+    <access origin="*" />
+    
+    <preference name="Orientation" value="portrait" />
+    <preference name="Fullscreen" value="true" />
+    <preference name="BackgroundColor" value="0xffffffff" />
+    <preference name="SplashScreenBackgroundColor" value="#ffffff" />
+    <preference name="ShowSplashScreenSpinner" value="false" />
+    <preference name="AutoHideSplashScreen" value="true" />
+    <preference name="SplashScreenDelay" value="0" />
+
+    <icon src="logo.png" />
+</widget>
